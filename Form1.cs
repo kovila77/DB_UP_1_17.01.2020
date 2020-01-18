@@ -26,7 +26,7 @@ namespace DB_UP_1_17_01_2020
         private void InitializeTVServers()
         {
             SQLiteConnectionStringBuilder sBuilder = new SQLiteConnectionStringBuilder();
-            sBuilder.DataSource = @"C:\Users\35498\Desktop\game_database.sqlite";
+            sBuilder.DataSource = @"C:\Users\35498\OneDrive\PSU\database\Repos\DB_UP_1_17.01.2020\game_database.sqlite";
             sBuilder.ForeignKeys = true;
             string sConnStr = sBuilder.ConnectionString;
             using (SQLiteConnection sConn = new SQLiteConnection(sConnStr))
@@ -47,6 +47,7 @@ namespace DB_UP_1_17_01_2020
                 ORDER BY server_name,
                          server.id,
                          gamer_name,
+                         gamer.id,
                          object_name,
                          object.id
                 ";
@@ -60,9 +61,9 @@ namespace DB_UP_1_17_01_2020
                     {
                         string serverName = (string)reader["server_name"];
                         long serverId = (long)reader["server_id"];
-                        var gamerName = reader["gamer_name"];
+                        var gamerName = reader["gamer_name"] as string;
                         var gamerId = reader["gamer_id"];
-                        var objectName = reader["object_name"];
+                        var objectName = reader["object_name"] as string;
 
                         if (lastServer != serverId)
                         {
@@ -71,19 +72,19 @@ namespace DB_UP_1_17_01_2020
                             servers.Add(currentServerNode, new ServerInfo(serverName));
                         }
 
-                        if (gamerName != System.DBNull.Value)
+                        if (gamerName != null)
                         {
                             if (lastGamer != (long)gamerId)
                             {
                                 lastGamer = (long)gamerId;
                                 currentGamerNode = currentServerNode.Nodes.Add((string)gamerName);
                                 servers[currentServerNode].AddChl();
-                                if (objectName != System.DBNull.Value)
+                                if (objectName != null)
                                 {
                                     servers[currentServerNode].AddChlWithChl();
                                 }
                             }
-                            if (objectName != System.DBNull.Value)
+                            if (objectName != null)
                             {
                                 currentGamerNode.Nodes.Add((string)objectName);
                             }
