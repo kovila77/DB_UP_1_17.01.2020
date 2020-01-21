@@ -26,7 +26,7 @@ namespace DB_UP_1_17_01_2020
         private void InitializeTVServers()
         {
             SQLiteConnectionStringBuilder sBuilder = new SQLiteConnectionStringBuilder();
-            sBuilder.DataSource = @"C:\Users\35498\OneDrive\PSU\database\Repos\DB_UP_1_17.01.2020\game_database.sqlite";
+            sBuilder.DataSource = @"C:\Users\35498\source\repos\DB_UP_1_17_01_2020\game_database.sqlite";
             sBuilder.ForeignKeys = true;
             string sConnStr = sBuilder.ConnectionString;
             using (SQLiteConnection sConn = new SQLiteConnection(sConnStr))
@@ -59,11 +59,11 @@ namespace DB_UP_1_17_01_2020
                     TreeNode currentGamerNode = null;
                     while (reader.Read())
                     {
-                        string serverName = (string)reader["server_name"];
+                        string serverName = reader["server_name"] as string;
                         long serverId = (long)reader["server_id"];
-                        var gamerName = reader["gamer_name"] as string;
+                        string gamerName = reader["gamer_name"] as string;
                         var gamerId = reader["gamer_id"];
-                        var objectName = reader["object_name"] as string;
+                        string objectName = reader["object_name"] as string;
 
                         if (lastServer != serverId)
                         {
@@ -77,7 +77,7 @@ namespace DB_UP_1_17_01_2020
                             if (lastGamer != (long)gamerId)
                             {
                                 lastGamer = (long)gamerId;
-                                currentGamerNode = currentServerNode.Nodes.Add((string)gamerName);
+                                currentGamerNode = currentServerNode.Nodes.Add(gamerName);
                                 servers[currentServerNode].AddChl();
                                 if (objectName != null)
                                 {
@@ -86,7 +86,7 @@ namespace DB_UP_1_17_01_2020
                             }
                             if (objectName != null)
                             {
-                                currentGamerNode.Nodes.Add((string)objectName);
+                                currentGamerNode.Nodes.Add(objectName);
                             }
                         }
                     }
