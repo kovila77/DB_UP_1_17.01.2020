@@ -24,7 +24,7 @@ namespace DB_UP_1_17_01_2020
         {
             SQLiteConnectionStringBuilder sBuilder = new SQLiteConnectionStringBuilder();
 
-            sBuilder.DataSource = @"C:\Users\35498\source\repos\DB_UP_1_17_01_2020\game_database.sqlite";
+            sBuilder.DataSource = @"E:\OneDrive\PSU\database\Repos\DB_UP_1_17.01.2020\Server_tree";
             sBuilder.ForeignKeys = true; // не обязательно, т.к. не записываем данные
 
             serverNodes = new Dictionary<TreeNode, ServerInfo>();
@@ -54,8 +54,8 @@ namespace DB_UP_1_17_01_2020
                 ";
                 using (SQLiteDataReader reader = sCommand.ExecuteReader())
                 {
-                    long lastServer = -1;
-                    long lastGamer = -1;
+                    long lastServerId = -1;
+                    long lastGamerId = -1;
                     TreeNode currentServerNode = null;
                     TreeNode currentGamerNode = null;
                     while (reader.Read())
@@ -67,9 +67,9 @@ namespace DB_UP_1_17_01_2020
                         string objectName = reader["object_name"] as string;
 
                         //Если идентификатор сервера поменялся, то создать новый узел дерева и сделать его текущим. Сохранить ссылку в словарь
-                        if (lastServer != serverId)
+                        if (lastServerId != serverId)
                         {
-                            lastServer = serverId;
+                            lastServerId = serverId;
                             currentServerNode = tvServers.Nodes.Add(serverName);
                             serverNodes.Add(currentServerNode, new ServerInfo(serverName));
                         }
@@ -78,9 +78,9 @@ namespace DB_UP_1_17_01_2020
                         if (gamerName != null) //Фактически значит: есть ли на сервере геймеры
                         {
                             //Если идентификатор геймера поменялся, то создаём новый узел дерева, принадлежащий серверу, и делаем его текущим узлом для добавления объектов.
-                            if (lastGamer != (long)gamerId) 
+                            if (lastGamerId != (long)gamerId) 
                             {
-                                lastGamer = (long)gamerId;
+                                lastGamerId = (long)gamerId;
                                 currentGamerNode = currentServerNode.Nodes.Add(gamerName);
                                 serverNodes[currentServerNode].AddCountChl();
 

@@ -1,0 +1,49 @@
+create table server
+(
+	id integer not null
+		primary key autoincrement,
+	name text not null
+);
+
+create table gamer
+(
+	id integer not null
+		primary key autoincrement,
+	nickname text not null,
+	server_id integer not null
+		references server
+);
+
+create table object
+(
+	id integer not null
+		primary key autoincrement,
+	name text not null,
+	owner_gamer_id integer not null
+		references gamer
+);
+
+INSERT INTO server (id, name) VALUES (1, 'MSK');
+INSERT INTO server (id, name) VALUES (2, 'Piter');
+INSERT INTO server (id, name) VALUES (3, 'Perm');
+INSERT INTO server (id, name) VALUES (4, 'Perm2');
+INSERT INTO server (id, name) VALUES (5, 'New York');
+INSERT INTO gamer (id, nickname, server_id) VALUES (2, 'kovila77', 3);
+INSERT INTO gamer (id, nickname, server_id) VALUES (3, 'olegase', 1);
+INSERT INTO gamer (id, nickname, server_id) VALUES (4, 'slavaider', 1);
+INSERT INTO gamer (id, nickname, server_id) VALUES (5, 'Vasya Pupkin', 2);
+INSERT INTO gamer (id, nickname, server_id) VALUES (6, 'xx_zzz_xx_', 2);
+INSERT INTO gamer (id, nickname, server_id) VALUES (7, 'xx_zzz_xx_', 2);
+INSERT INTO gamer (id, nickname, server_id) VALUES (8, 'xx_zzz_xx_', 2);
+INSERT INTO gamer (id, nickname, server_id) VALUES (9, 'olegase', 1);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (1, 'Курсовая', 2);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (3, 'Банка', 3);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (4, 'Бутылка', 3);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (7, 'Огурец', 5);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (8, 'Пушка', 2);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (9, 'Пушка', 4);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (10, 'Телефон', 5);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (11, 'Шкатулка', 2);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (12, 'Шкатулка', 2);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (13, 'Дом', 5);
+INSERT INTO object (id, name, owner_gamer_id) VALUES (14, 'Бочка', 9);
