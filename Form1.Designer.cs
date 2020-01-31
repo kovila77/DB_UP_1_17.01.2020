@@ -41,7 +41,6 @@
             this.tvServers.TabIndex = 0;
             this.tvServers.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.tvServers_AfterCollapse);
             this.tvServers.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.tvServers_AfterExpand);
-            this.tvServers.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvServers_NodeMouseClick);
             // 
             // Form1
             // 

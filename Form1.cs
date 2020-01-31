@@ -12,23 +12,24 @@ namespace DB_UP_1_17_01_2020
 {
     public partial class Form1 : Form
     {
-        //List<KeyValuePair< server_node, KeyValuePair< count_Child, coun_Child_Without_Child >>>
-        //private List<KeyValuePair<TreeNode, Tuple<int, int>>> servers;
-        Dictionary<TreeNode, ServerInfo> servers;
+        private Dictionary<TreeNode, ServerInfo> serverNodes;
+
         public Form1()
         {
-            InitializeComponent();
-            //servers = new List<KeyValuePair<TreeNode, Tuple<int, int>>>();
-            servers = new Dictionary<TreeNode, ServerInfo>();
+            InitializeComponent();         
             InitializeTVServers();
         }
 
         private void InitializeTVServers()
         {
             SQLiteConnectionStringBuilder sBuilder = new SQLiteConnectionStringBuilder();
+
             sBuilder.DataSource = @"C:\Users\35498\source\repos\DB_UP_1_17_01_2020\game_database.sqlite";
-            sBuilder.ForeignKeys = true;
+            sBuilder.ForeignKeys = true; // не обязательно, т.к. не записываем данные
+
+            serverNodes = new Dictionary<TreeNode, ServerInfo>();
             string sConnStr = sBuilder.ConnectionString;
+
             using (SQLiteConnection sConn = new SQLiteConnection(sConnStr))
             {
 
@@ -65,26 +66,32 @@ namespace DB_UP_1_17_01_2020
                         var gamerId = reader["gamer_id"];
                         string objectName = reader["object_name"] as string;
 
+                        //Если идентификатор сервера поменялся, то создать новый узел дерева и сделать его текущим. Сохранить ссылку в словарь
                         if (lastServer != serverId)
                         {
                             lastServer = serverId;
                             currentServerNode = tvServers.Nodes.Add(serverName);
-                            servers.Add(currentServerNode, new ServerInfo(serverName));
+                            serverNodes.Add(currentServerNode, new ServerInfo(serverName));
                         }
 
-                        if (gamerName != null)
+
+                        if (gamerName != null) //Фактически значит: есть ли на сервере геймеры
                         {
-                            if (lastGamer != (long)gamerId)
+                            //Если идентификатор геймера поменялся, то создаём новый узел дерева, принадлежащий серверу, и делаем его текущим узлом для добавления объектов.
+                            if (lastGamer != (long)gamerId) 
                             {
                                 lastGamer = (long)gamerId;
                                 currentGamerNode = currentServerNode.Nodes.Add(gamerName);
-                                servers[currentServerNode].AddChl();
-                                if (objectName != null)
+                                serverNodes[currentServerNode].AddCountChl();
+
+                                if (objectName != null) //Фактически значит: есть ли у геймера предметы
                                 {
-                                    servers[currentServerNode].AddChlWithChl();
+                                    //Если у нового геймера есть предмет, то он потомок Сервера с потомком. Увеличиваем число потомков текущего сервера, у которых есть потомки
+                                    serverNodes[currentServerNode].AddCountChlWithChl();
                                 }
                             }
-                            if (objectName != null)
+
+                            if (objectName != null) 
                             {
                                 currentGamerNode.Nodes.Add(objectName);
                             }
@@ -101,7 +108,13 @@ namespace DB_UP_1_17_01_2020
 
             private string name;
 
+            /// <summary>  
+            ///  Возвращает число геймеров на сервере
+            /// </summary> 
             public int CountChild { get { return countChild; } }
+            /// <summary>  
+            ///  Возвращает число геймеров на сервере, у которых есть предметы
+            /// </summary> 
             public int CountChildWithChild { get { return countChildWithChild; } }
             public string Name { get { return name; } }
 
@@ -112,33 +125,37 @@ namespace DB_UP_1_17_01_2020
                 this.countChildWithChild = 0;
             }
 
-            public void AddChlWithChl()
+            /// <summary>  
+            ///  Увеличивает число потомков (геймеров) у сервера, у которых есть потомки (предметы)
+            /// </summary> 
+            public void AddCountChlWithChl()
             {
                 countChildWithChild++;
             }
-            public void AddChl()
+
+            /// <summary>  
+            ///  Увеличивает число потомков у сервера
+            /// </summary> 
+            public void AddCountChl()
             {
                 countChild++;
             }
         }
 
-        private void tvServers_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-
-        }
 
         private void tvServers_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Parent == null && servers.ContainsKey(e.Node))
-                e.Node.Text = $@"{e.Node.Text} - {servers[e.Node].CountChildWithChild}/{servers[e.Node].CountChild - servers[e.Node].CountChildWithChild}";
-
-
+            // Если раскрыли узел, являющийся сервером, изменяем его название в соответсвии с заданием
+            if (serverNodes.ContainsKey(e.Node))
+                e.Node.Text = $@"{e.Node.Text} - {serverNodes[e.Node].CountChildWithChild}/{serverNodes[e.Node].CountChild - serverNodes[e.Node].CountChildWithChild}";
         }
+
 
         private void tvServers_AfterCollapse(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Parent == null && servers.ContainsKey(e.Node))
-                e.Node.Text = servers[e.Node].Name;
+            // Если закрыли узел, являющийся сервером, устанавливаем его название на название Сервера
+            if (serverNodes.ContainsKey(e.Node))
+                e.Node.Text = serverNodes[e.Node].Name;
         }
     }
 }
