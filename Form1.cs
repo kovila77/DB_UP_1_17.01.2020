@@ -24,7 +24,8 @@ namespace DB_UP_1_17_01_2020
         {
             SQLiteConnectionStringBuilder sBuilder = new SQLiteConnectionStringBuilder();
 
-            sBuilder.DataSource = @"E:\OneDrive\PSU\database\Repos\DB_UP_1_17.01.2020\Server_tree";
+            //sBuilder.DataSource = @"E:\OneDrive\PSU\database\Repos\DB_UP_1_17.01.2020\Server_tree";
+            sBuilder.DataSource = @"C:\Users\35498\OneDrive\PSU\database\Repos\DB_UP_1_17.01.2020\Server_tree";
             sBuilder.ForeignKeys = true; // не обязательно, т.к. не записываем данные
 
             serverNodes = new Dictionary<TreeNode, ServerInfo>();
